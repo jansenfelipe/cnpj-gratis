@@ -1,0 +1,25 @@
+{
+    "name": "jansenfelipe/cnpj-gratis",
+    "description": "Com esse pacote você poderá consultar, gratuitamente, CNPJs diretamente no site da receita.",
+    "keywords": ["laravel", "cnpj", "php"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jansen Felipe",
+            "email": "jansen.felipe@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "kriswallsmith/buzz": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "JansenFelipe\\CnpjGratis": "src/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist"
+    },
+    "minimum-stability": "stable"
+}
