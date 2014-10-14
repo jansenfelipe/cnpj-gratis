@@ -73,7 +73,7 @@ class CnpjGratis {
         $param = array(
             'origem' => 'comprovante',
             'viewstate' => $viewstate,
-            'cnpj' => $cnpj,
+            'cnpj' => Utils::unmask($cnpj),
             'captcha' => $captcha,
             'captchaAudio' => '',
             'submit1' => 'Consultar',
@@ -131,9 +131,8 @@ class CnpjGratis {
                 'consulta_data' => $result[25],
                 'consulta_hora' => $result[26],
             ));
-        }
-
-        return false;
+        } else
+            throw new \Exception('Aconteceu um erro ao fazer a consulta. Envie os dados novamente.');
     }
 
 }
