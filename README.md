@@ -1,9 +1,9 @@
 # CNPJ Grátis
 
 ----------------------
-Com esse pacote você poderá realizar consultas de CNPJ no site da receita gratuitamente.
+Com esse pacote você poderá realizar consultas de CNPJ no site da Receita Federal do Brasil gratuitamente.
 
-Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para ser digitado.
+Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para ser digitado pelo usuário
 
 ### Para utilizar
 
@@ -38,9 +38,18 @@ Adicione também `'CnpjGratis' => 'JansenFelipe\CnpjGratis\Facade'` no final do 
 
     ),
 
-Agora basta chamar
+Agora chame o método `getParams()` para retornas os dados necessários para enviar no método `consulta()` 
 
-    $dados = CnpjGratis::consultar('31030080');
+    $params = CnpjGratis::getParams(); //Output: array('captcha', 'viewstate', 'cookie')
+
+Obs: Na resposta, a chave `captcha` contém a URL da imagem.
+
+    $dadosEmpresa = CnpjGratis::consulta(
+        '45.543.915/0001-81',
+        'INFORME_AS_LETRAS_DO_CAPTCHA',
+        $params['viewstate'],
+        $params['cookie']
+    );
 
 
 ### (No-Laravel)
@@ -49,7 +58,15 @@ Adicione o autoload.php do composer no seu arquivo PHP.
 
     require_once 'vendor/autoload.php';  
 
-Agora basta chamar o metodo consultar($cnpj) da classe JansenFelipe\CnpjGratis
+Agora chame o método `getParams()` para retornas os dados necessários para enviar no método `consulta()` 
 
-    $cnpjGratis = new JansenFelipe\CnpjGratis();
-    $dados = $cnpjGratis->consultar('31030080');
+    $params = CnpjGratis::getParams(); //Output: array('captcha', 'viewstate', 'cookie')
+
+Obs: Na resposta, a chave `captcha` contém a URL da imagem.
+
+    $dadosEmpresa = CnpjGratis::consulta(
+        '45.543.915/0001-81',
+        'INFORME_AS_LETRAS_DO_CAPTCHA',
+        $params['viewstate'],
+        $params['cookie']
+    );
