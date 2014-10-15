@@ -65,6 +65,7 @@ class CnpjGratis {
     public static function consulta($cnpj, $captcha, $viewstate, $stringCookie) {
         $arrayCookie = explode(';', $stringCookie);
 
+
         if (!Utils::isCnpj($cnpj))
             throw new \Exception('O CNPJ informado não é válido');
 
@@ -104,35 +105,68 @@ class CnpjGratis {
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
         \phpQuery::newDocumentHTML($html, $charset = 'utf-8');
 
-        $Bs = pq('b');
+        $tr = pq('body > table:eq(1)')->find('table:eq(1) > tr:eq(0)');
+        $result['cnpj'] = pq($tr)->find('td:eq(0) > font > b:eq(0)')->html();
 
-        $result = array();
-        foreach ($Bs as $b)
-            $result[] = trim(pq($b)->html());
+        if (!Utils::isCnpj($result['cnpj']))
+            throw new \Exception('Erro ao consultar. Verifique se digitou corretamente o captcha.', 99);
 
-        if (isset($result[4]) && Utils::isCnpj($result[4])) {
-            return(array(
-                'cnpj' => Utils::unmask($result[4]),
-                'tipo' => $result[5],
-                'data_abertura' => $result[7],
-                'razao_social' => $result[8],
-                'nome_fantasia' => $result[9],
-                'cnae' => array($result[10], $result[11]),
-                'natureza_juridica' => $result[12],
-                'logradouro' => $result[13],
-                'numero' => $result[14],
-                'complemento' => $result[15],
-                'bairro' => $result[17],
-                'cidade' => $result[18],
-                'uf' => $result[19],
-                'cep' => Utils::unmask($result[16]),
-                'situacao_cadastral' => $result[20],
-                'situacao_cadastral_data' => $result[21],
-                'consulta_data' => $result[25],
-                'consulta_hora' => $result[26],
-            ));
-        } else
-            throw new \Exception('Aconteceu um erro ao fazer a consulta. Envie os dados novamente.');
+        $result['tipo'] = pq($tr)->find('td:eq(0) > font > b:eq(1)')->html();
+        $result['data_abertura'] = pq($tr)->find('td:eq(2) > font > b:eq(0)')->html();
+
+        $tds = pq('body > table:gt(0)')->find('table:gt(0) > tr:gt(0) > td');
+
+        foreach ($tds as $td) {
+            $key = trim(preg_replace('/\s+/', ' ', pq($td)->find('font:first')->html()));
+
+            switch ($key) {
+                case 'NOME EMPRESARIAL': $key = 'razao_social';
+                    break;
+                case 'TÍTULO DO ESTABELECIMENTO (NOME DE FANTASIA)': $key = 'nome_fantasia';
+                    break;
+                case 'CÓDIGO E DESCRIÇÃO DA ATIVIDADE ECONÔMICA PRINCIPAL': $key = 'cnae_principal';
+                    break;
+                case 'CÓDIGO E DESCRIÇÃO DAS ATIVIDADES ECONÔMICAS SECUNDÁRIAS': $key = 'cnaes_secundario';
+                    break;
+                case 'CÓDIGO E DESCRIÇÃO DA NATUREZA JURÍDICA' : $key = 'natureza_juridica';
+                    break;
+                case 'LOGRADOURO': $key = 'logradouro';
+                    break;
+                case 'NÚMERO': $key = 'numero';
+                    break;
+                case 'COMPLEMENTO': $key = 'complemento';
+                    break;
+                case 'CEP': $key = 'cep';
+                    break;
+                case 'BAIRRO/DISTRITO': $key = 'bairro';
+                    break;
+                case 'MUNICÍPIO': $key = 'cidade';
+                    break;
+                case 'UF': $key = 'uf';
+                    break;
+                case 'SITUAÇÃO CADASTRAL': $key = 'situacao_cadastral';
+                    break;
+                case 'DATA DA SITUAÇÃO CADASTRAL': $key = 'situacao_cadastral_data';
+                    break;
+                case 'MOTIVO DE SITUAÇÃO CADASTRAL': $key = 'motivo_ituacao_cadastral';
+                    break;
+                case 'SITUAÇÃO ESPECIAL': $key = 'situacao_especial';
+                    break;
+                case 'DATA DA SITUAÇÃO ESPECIAL': $key = 'situacao_especial_data';
+                    break;
+            }
+
+            $bs = pq($td)->find('font > b');
+
+            foreach ($bs as $b) {
+                if (count($bs) == 1)
+                    $result[$key] = trim(preg_replace('/\s+/', ' ', pq($b)->html()));
+                else
+                    $result[$key][] = trim(preg_replace('/\s+/', ' ', pq($b)->html()));
+            }
+        }
+
+        return $result;
     }
 
 }
