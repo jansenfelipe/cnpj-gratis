@@ -27,7 +27,8 @@
         }
     },
      "suggest": {
-        "jansenfelipe/cpf-gratis": "Permite consulta CPF no site da receita"
+        "jansenfelipe/cpf-gratis": "Permite consulta de CPF no site da receita",
+        "jansenfelipe/cep-gratis": "Permite consulta de CEP no site dos Correios"
     },
     "minimum-stability": "dev"
 }
