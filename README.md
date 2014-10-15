@@ -1,5 +1,5 @@
 # CNPJ Grátis
-
+[![Travis](https://travis-ci.org/jansenfelipe/cnpj-gratis.svg?branch=1.0)](https://travis-ci.org/jansenfelipe/cnpj-gratis)
 [![Latest Stable Version](https://poser.pugx.org/jansenfelipe/cnpj-gratis/v/stable.svg)](https://packagist.org/packages/jansenfelipe/cnpj-gratis) [![Total Downloads](https://poser.pugx.org/jansenfelipe/cnpj-gratis/downloads.svg)](https://packagist.org/packages/jansenfelipe/cnpj-gratis) [![Latest Unstable Version](https://poser.pugx.org/jansenfelipe/cnpj-gratis/v/unstable.svg)](https://packagist.org/packages/jansenfelipe/cnpj-gratis) [![License](https://poser.pugx.org/jansenfelipe/cnpj-gratis/license.svg)](https://packagist.org/packages/jansenfelipe/cnpj-gratis)
 
 

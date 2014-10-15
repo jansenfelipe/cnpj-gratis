@@ -26,5 +26,8 @@
             "dev-master": "1.0-dev"
         }
     },
+     "suggest": {
+        "jansenfelipe/cpf-gratis": "Permite consulta CPF no site da receita"
+    },
     "minimum-stability": "dev"
 }
