@@ -12,7 +12,7 @@ $params = \JansenFelipe\CnpjGratis\CnpjGratis::getParams();
 ?>
 
 
-<img src="<?php echo $params['captcha']; ?>" /><br />
+<img src="<?php echo $params['captchaBase64']; ?>" /><br />
 
 <form action="" method="POST">
     <input type="text" name="cnpj" value="<?php echo $cnpj; ?>" />
