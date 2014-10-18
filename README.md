@@ -17,7 +17,25 @@ Execute
 
     $ composer update
 
-## (Laravel)
+Adicione o autoload.php do composer no seu arquivo PHP.
+
+    require_once 'vendor/autoload.php';  
+
+Agora chame o método `getParams()` para retornar os dados necessários para enviar no método `consulta()` 
+
+    $params = CnpjGratis::getParams(); //Output: array('captcha', 'viewstate', 'cookie')
+
+Obs: Na resposta, a chave `captcha` contém a URL da imagem.
+
+    $dadosEmpresa = CnpjGratis::consulta(
+        '45.543.915/0001-81',
+        'INFORME_AS_LETRAS_DO_CAPTCHA',
+        $params['viewstate'],
+        $params['cookie']
+    );
+
+
+### Frameworks
 
 Abra seu arquivo `config/app.php` e adicione `'JansenFelipe\CnpjGratis\CnpjGratisServiceProvider'` ao final do array `$providers`
 
@@ -56,19 +74,4 @@ Obs: Na resposta, a chave `captcha` contém a URL da imagem.
 
 ### (No-Laravel)
 
-Adicione o autoload.php do composer no seu arquivo PHP.
 
-    require_once 'vendor/autoload.php';  
-
-Agora chame o método `getParams()` para retornas os dados necessários para enviar no método `consulta()` 
-
-    $params = CnpjGratis::getParams(); //Output: array('captcha', 'viewstate', 'cookie')
-
-Obs: Na resposta, a chave `captcha` contém a URL da imagem.
-
-    $dadosEmpresa = CnpjGratis::consulta(
-        '45.543.915/0001-81',
-        'INFORME_AS_LETRAS_DO_CAPTCHA',
-        $params['viewstate'],
-        $params['cookie']
-    );
