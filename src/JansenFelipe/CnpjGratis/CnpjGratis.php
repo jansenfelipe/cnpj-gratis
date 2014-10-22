@@ -108,7 +108,9 @@ class CnpjGratis {
         $html = curl_exec($ch);
         curl_close($ch);
 
-        require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
+        if (!method_exists('phpQuery', 'newDocumentHTML'))
+            require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
+
         \phpQuery::newDocumentHTML($html, $charset = 'utf-8');
 
         $tr = pq('body > table:eq(1)')->find('table:eq(1) > tr:eq(0)');
