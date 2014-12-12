@@ -156,7 +156,7 @@ class CnpjGratis {
                     break;
                 case 'DATA DA SITUAÇÃO CADASTRAL': $key = 'situacao_cadastral_data';
                     break;
-                case 'MOTIVO DE SITUAÇÃO CADASTRAL': $key = 'motivo_ituacao_cadastral';
+                case 'MOTIVO DE SITUAÇÃO CADASTRAL': $key = 'motivo_situacao_cadastral';
                     break;
                 case 'SITUAÇÃO ESPECIAL': $key = 'situacao_especial';
                     break;
