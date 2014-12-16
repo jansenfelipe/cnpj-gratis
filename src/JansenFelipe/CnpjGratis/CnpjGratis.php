@@ -167,10 +167,11 @@ class CnpjGratis {
             $bs = pq($td)->find('font > b');
 
             foreach ($bs as $b) {
+                $attach = htmlspecialchars_decode(trim(preg_replace('/\s+/', ' ', pq($b)->html())));
                 if (count($bs) == 1)
-                    $result[$key] = trim(preg_replace('/\s+/', ' ', pq($b)->html()));
+                    $result[$key] = $attach;
                 else
-                    $result[$key][] = trim(preg_replace('/\s+/', ' ', pq($b)->html()));
+                    $result[$key][] = $attach;
             }
         }
 
