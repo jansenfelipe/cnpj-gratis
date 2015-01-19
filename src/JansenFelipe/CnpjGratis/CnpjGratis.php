@@ -162,6 +162,12 @@ class CnpjGratis {
                     break;
                 case 'DATA DA SITUAÇÃO ESPECIAL': $key = 'situacao_especial_data';
                     break;
+				case 'TELEFONE': $key = 'telefone';
+                    break;
+                case 'ENDEREÇO ELETRÔNICO': $key = 'email';
+                    break;
+                case 'ENTE FEDERATIVO RESPONSÁVEL (EFR)': $key = 'ente_federativo_responsavel';
+                    break;
             }
 
             $bs = pq($td)->find('font > b');
