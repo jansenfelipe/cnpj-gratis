@@ -2,7 +2,10 @@
 
 namespace JansenFelipe\CnpjGratis;
 
+use Exception;
+use Goutte\Client;
 use JansenFelipe\Utils\Utils as Utils;
+use Symfony\Component\DomCrawler\Crawler;
 
 class CnpjGratis {
 
@@ -15,39 +18,20 @@ class CnpjGratis {
      * @return array Link para ver o Captcha e Viewstate
      */
     public static function getParams() {
-        $ch = curl_init('www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/Cnpjreva_Solicitacao2.asp');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
+        $client = new Client();
+        $crawler = $client->request('GET', 'http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/Cnpjreva_Solicitacao2.asp');
 
-        $response = curl_exec($ch);
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        curl_close($ch);
+        $response = $client->getResponse();
+        $headers = $response->getHeaders();
 
-        $header = substr($response, 0, $header_size);
-        $body = substr($response, $header_size);
+        $cookie = $headers['Set-Cookie'][0];
 
-        $out = preg_split("|(?:\r?\n){1}|m", $header);
-
-        foreach ($out as $line) {
-            @list($key, $val) = explode(": ", $line, 2);
-            if ($val != null) {
-                if (!array_key_exists($key, $headers))
-                    $headers[$key] = trim($val);
-            } else
-                $headers[] = $key;
-        }
-
-        if (!method_exists('phpQuery', 'newDocumentHTML'))
-            require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
-
-        \phpQuery::newDocumentHTML($body, $charset = 'utf-8');
-
-        $viewstate = \phpQuery::pq("#viewstate")->val();
+        $viewstate = $crawler->filter("#viewstate")->attr('value');
 
         if ($viewstate == "")
             throw new Exception('Erro ao recuperar viewstate');
 
-        $imgcaptcha = \phpQuery::pq("#imgcaptcha")->attr('src');
+        $imgcaptcha = $crawler->filter("#imgcaptcha")->attr('src');
         $urlCaptcha = 'http://www.receita.fazenda.gov.br' . $imgcaptcha;
 
         $captchaBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($urlCaptcha));
@@ -56,7 +40,7 @@ class CnpjGratis {
             'captcha' => $urlCaptcha,
             'captchaBase64' => $captchaBase64,
             'viewstate' => $viewstate,
-            'cookie' => $headers['Set-Cookie']
+            'cookie' => $cookie
         );
     }
 
@@ -69,13 +53,23 @@ class CnpjGratis {
      * @return array  Dados da empresa
      */
     public static function consulta($cnpj, $captcha, $viewstate, $stringCookie) {
+
+        $result = array();
+
         $arrayCookie = explode(';', $stringCookie);
 
-
         if (!Utils::isCnpj($cnpj))
-            throw new \Exception('O CNPJ informado não é válido');
+            throw new Exception('O CNPJ informado não é válido');
 
-        $ch = curl_init("http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/valida.asp");
+        $client = new Client();
+        $client->setHeader('Host', 'www.receita.fazenda.gov.br');
+        $client->setHeader('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:32.0) Gecko/20100101 Firefox/32.0');
+        $client->setHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9, */* ;q=0.8');
+        $client->setHeader('Accept-Language', 'pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3');
+        $client->setHeader('Accept-Encoding', 'gzip, deflate');
+        $client->setHeader('Referer', 'http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/Cnpjreva_Solicitacao2.asp');
+        $client->setHeader('Cookie', $arrayCookie[0]);
+        $client->setHeader('Connection', 'keep-alive');
 
         $param = array(
             'origem' => 'comprovante',
@@ -87,97 +81,77 @@ class CnpjGratis {
             'search_type' => 'cnpj'
         );
 
-        $options = array(
-            CURLOPT_COOKIEJAR => 'cookiejar',
-            CURLOPT_HTTPHEADER => array(
-                "Host: www.receita.fazenda.gov.br",
-                "User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:32.0) Gecko/20100101 Firefox/32.0",
-                "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-                "Accept-Language: pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3",
-                "Accept-Encoding: gzip, deflate",
-                "Referer: http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/Cnpjreva_Solicitacao2.asp",
-                "Cookie: ' . $arrayCookie[0] . '",
-                "Connection: keep-alive"
-            ),
-            CURLOPT_POSTFIELDS => http_build_query($param),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => 1
-        );
+        $crawler = $client->request('POST', 'http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/valida.asp', $param);
 
-        curl_setopt_array($ch, $options);
-        $html = curl_exec($ch);
-        curl_close($ch);
+        $td = $crawler->filter('body > table:nth-child(3) > tr > td');
 
-        if (!method_exists('phpQuery', 'newDocumentHTML'))
-            require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
+        foreach ($td->filter('td') as $td) {
+            $td = new Crawler($td);
 
-        \phpQuery::newDocumentHTML($html, $charset = 'utf-8');
+            if ($td->filter('font:nth-child(1)')->count() > 0) {
+                $key = trim(preg_replace('/\s+/', ' ', $td->filter('font:nth-child(1)')->html()));
 
-        $tr = pq('body > table:eq(1)')->find('table:eq(1) > tr:eq(0)');
-        $result['cnpj'] = pq($tr)->find('td:eq(0) > font > b:eq(0)')->html();
 
-        if (!Utils::isCnpj($result['cnpj']))
-            throw new \Exception('Erro ao consultar. Verifique se digitou corretamente o captcha.', 99);
+                switch ($key) {
+                    case 'NOME EMPRESARIAL': $key = 'razao_social';
+                        break;
+                    case 'TÍTULO DO ESTABELECIMENTO (NOME DE FANTASIA)': $key = 'nome_fantasia';
+                        break;
+                    case 'CÓDIGO E DESCRIÇÃO DA ATIVIDADE ECONÔMICA PRINCIPAL': $key = 'cnae_principal';
+                        break;
+                    case 'CÓDIGO E DESCRIÇÃO DAS ATIVIDADES ECONÔMICAS SECUNDÁRIAS': $key = 'cnaes_secundario';
+                        break;
+                    case 'CÓDIGO E DESCRIÇÃO DA NATUREZA JURÍDICA' : $key = 'natureza_juridica';
+                        break;
+                    case 'LOGRADOURO': $key = 'logradouro';
+                        break;
+                    case 'NÚMERO': $key = 'numero';
+                        break;
+                    case 'COMPLEMENTO': $key = 'complemento';
+                        break;
+                    case 'CEP': $key = 'cep';
+                        break;
+                    case 'BAIRRO/DISTRITO': $key = 'bairro';
+                        break;
+                    case 'MUNICÍPIO': $key = 'cidade';
+                        break;
+                    case 'UF': $key = 'uf';
+                        break;
+                    case 'SITUAÇÃO CADASTRAL': $key = 'situacao_cadastral';
+                        break;
+                    case 'DATA DA SITUAÇÃO CADASTRAL': $key = 'situacao_cadastral_data';
+                        break;
+                    case 'MOTIVO DE SITUAÇÃO CADASTRAL': $key = 'motivo_situacao_cadastral';
+                        break;
+                    case 'SITUAÇÃO ESPECIAL': $key = 'situacao_especial';
+                        break;
+                    case 'DATA DA SITUAÇÃO ESPECIAL': $key = 'situacao_especial_data';
+                        break;
+                    case 'TELEFONE': $key = 'telefone';
+                        break;
+                    case 'ENDEREÇO ELETRÔNICO': $key = 'email';
+                        break;
+                    case 'ENTE FEDERATIVO RESPONSÁVEL (EFR)': $key = 'ente_federativo_responsavel';
+                        break;
+                    default: $key = null;
+                        break;
+                }
 
-        $result['tipo'] = pq($tr)->find('td:eq(0) > font > b:eq(1)')->html();
-        $result['data_abertura'] = pq($tr)->find('td:eq(2) > font > b:eq(0)')->html();
 
-        $tds = pq('body > table:gt(0)')->find('table:gt(0) > tr:gt(0) > td');
+                if (!is_null($key)) {
+                    $bs = $td->filter('font > b');
+                    foreach ($bs as $b) {
+                        $b = new Crawler($b);
 
-        foreach ($tds as $td) {
-            $key = trim(preg_replace('/\s+/', ' ', pq($td)->find('font:first')->html()));
+                        $str = trim(preg_replace('/\s+/', ' ', $b->html()));
+                        $attach = htmlspecialchars_decode(utf8_decode($str));
 
-            switch ($key) {
-                case 'NOME EMPRESARIAL': $key = 'razao_social';
-                    break;
-                case 'TÍTULO DO ESTABELECIMENTO (NOME DE FANTASIA)': $key = 'nome_fantasia';
-                    break;
-                case 'CÓDIGO E DESCRIÇÃO DA ATIVIDADE ECONÔMICA PRINCIPAL': $key = 'cnae_principal';
-                    break;
-                case 'CÓDIGO E DESCRIÇÃO DAS ATIVIDADES ECONÔMICAS SECUNDÁRIAS': $key = 'cnaes_secundario';
-                    break;
-                case 'CÓDIGO E DESCRIÇÃO DA NATUREZA JURÍDICA' : $key = 'natureza_juridica';
-                    break;
-                case 'LOGRADOURO': $key = 'logradouro';
-                    break;
-                case 'NÚMERO': $key = 'numero';
-                    break;
-                case 'COMPLEMENTO': $key = 'complemento';
-                    break;
-                case 'CEP': $key = 'cep';
-                    break;
-                case 'BAIRRO/DISTRITO': $key = 'bairro';
-                    break;
-                case 'MUNICÍPIO': $key = 'cidade';
-                    break;
-                case 'UF': $key = 'uf';
-                    break;
-                case 'SITUAÇÃO CADASTRAL': $key = 'situacao_cadastral';
-                    break;
-                case 'DATA DA SITUAÇÃO CADASTRAL': $key = 'situacao_cadastral_data';
-                    break;
-                case 'MOTIVO DE SITUAÇÃO CADASTRAL': $key = 'motivo_situacao_cadastral';
-                    break;
-                case 'SITUAÇÃO ESPECIAL': $key = 'situacao_especial';
-                    break;
-                case 'DATA DA SITUAÇÃO ESPECIAL': $key = 'situacao_especial_data';
-                    break;
-				case 'TELEFONE': $key = 'telefone';
-                    break;
-                case 'ENDEREÇO ELETRÔNICO': $key = 'email';
-                    break;
-                case 'ENTE FEDERATIVO RESPONSÁVEL (EFR)': $key = 'ente_federativo_responsavel';
-                    break;
-            }
-
-            $bs = pq($td)->find('font > b');
-
-            foreach ($bs as $b) {
-                $attach = htmlspecialchars_decode(trim(preg_replace('/\s+/', ' ', pq($b)->html())));
-                if (count($bs) == 1)
-                    $result[$key] = $attach;
-                else
-                    $result[$key][] = $attach;
+                        if ($bs->count() == 1)
+                            $result[$key] = $attach;
+                        else
+                            $result[$key][] = $attach;
+                    }
+                }
             }
         }
 
