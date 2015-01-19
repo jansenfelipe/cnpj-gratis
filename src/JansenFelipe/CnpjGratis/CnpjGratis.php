@@ -156,21 +156,28 @@ class CnpjGratis {
                     break;
                 case 'DATA DA SITUAÇÃO CADASTRAL': $key = 'situacao_cadastral_data';
                     break;
-                case 'MOTIVO DE SITUAÇÃO CADASTRAL': $key = 'motivo_ituacao_cadastral';
+                case 'MOTIVO DE SITUAÇÃO CADASTRAL': $key = 'motivo_situacao_cadastral';
                     break;
                 case 'SITUAÇÃO ESPECIAL': $key = 'situacao_especial';
                     break;
                 case 'DATA DA SITUAÇÃO ESPECIAL': $key = 'situacao_especial_data';
+                    break;
+				case 'TELEFONE': $key = 'telefone';
+                    break;
+                case 'ENDEREÇO ELETRÔNICO': $key = 'email';
+                    break;
+                case 'ENTE FEDERATIVO RESPONSÁVEL (EFR)': $key = 'ente_federativo_responsavel';
                     break;
             }
 
             $bs = pq($td)->find('font > b');
 
             foreach ($bs as $b) {
+                $attach = htmlspecialchars_decode(trim(preg_replace('/\s+/', ' ', pq($b)->html())));
                 if (count($bs) == 1)
-                    $result[$key] = trim(preg_replace('/\s+/', ' ', pq($b)->html()));
+                    $result[$key] = $attach;
                 else
-                    $result[$key][] = trim(preg_replace('/\s+/', ' ', pq($b)->html()));
+                    $result[$key][] = $attach;
             }
         }
 
