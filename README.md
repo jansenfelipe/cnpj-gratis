@@ -1,7 +1,8 @@
 # CNPJ Grátis
 [![Travis](https://travis-ci.org/jansenfelipe/cnpj-gratis.svg?branch=1.0)](https://travis-ci.org/jansenfelipe/cnpj-gratis)
-[![Latest Stable Version](https://poser.pugx.org/jansenfelipe/cnpj-gratis/v/stable.svg)](https://packagist.org/packages/jansenfelipe/cnpj-gratis) [![Total Downloads](https://poser.pugx.org/jansenfelipe/cnpj-gratis/downloads.svg)](https://packagist.org/packages/jansenfelipe/cnpj-gratis) [![Latest Unstable Version](https://poser.pugx.org/jansenfelipe/cnpj-gratis/v/unstable.svg)](https://packagist.org/packages/jansenfelipe/cnpj-gratis) [![License](https://poser.pugx.org/jansenfelipe/cnpj-gratis/license.svg)](https://packagist.org/packages/jansenfelipe/cnpj-gratis)
-
+[![Latest Stable Version](http://img.shields.io/packagist/v/jansenfelipe/cnpj-gratis.svg?style=flat)](https://packagist.org/packages/jansenfelipe/cnpj-gratis)
+[![Total Downloads](http://img.shields.io/packagist/dt/jansenfelipe/cnpj-gratis.svg?style=flat)](https://packagist.org/packages/jansenfelipe/cnpj-gratis)
+[![License](http://img.shields.io/packagist/l/jansenfelipe/cnpj-gratis.svg?style=flat)](https://packagist.org/packages/jansenfelipe/cnpj-gratis)
 
 Com esse pacote você poderá realizar consultas de CNPJ no site da Receita Federal do Brasil gratuitamente.
 

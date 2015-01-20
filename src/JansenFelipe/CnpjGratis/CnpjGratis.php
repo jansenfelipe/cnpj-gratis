@@ -36,7 +36,12 @@ class CnpjGratis {
 
         $captchaBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($urlCaptcha));
 
+        $audio = $crawler->filter("#captchaLink")->attr('onclick');
+        $audio = str_replace("javascript:setTimeout(function(){play_sound('", "", $audio);
+        $audio = str_replace("')}, 8000); document.getElementById('spanSom').style.display='block'; document.getElementById('captchaAudio').focus();", "", $audio);
+
         return array(
+            'audio' => 'http://www.receita.fazenda.gov.br'.$audio,
             'captcha' => $urlCaptcha,
             'captchaBase64' => $captchaBase64,
             'viewstate' => $viewstate,
@@ -144,7 +149,7 @@ class CnpjGratis {
                         $b = new Crawler($b);
 
                         $str = trim(preg_replace('/\s+/', ' ', $b->html()));
-                        $attach = htmlspecialchars_decode(utf8_decode($str));
+                        $attach = htmlspecialchars_decode($str);
 
                         if ($bs->count() == 1)
                             $result[$key] = $attach;
