@@ -1,5 +1,5 @@
 # CNPJ Grátis
-[![Travis](https://travis-ci.org/jansenfelipe/cnpj-gratis.svg?branch=1.0)](https://travis-ci.org/jansenfelipe/cnpj-gratis)
+[![Travis](https://travis-ci.org/jansenfelipe/cnpj-gratis.svg?branch=2.0)](https://travis-ci.org/jansenfelipe/cnpj-gratis)
 [![Latest Stable Version](http://img.shields.io/packagist/v/jansenfelipe/cnpj-gratis.svg?style=flat)](https://packagist.org/packages/jansenfelipe/cnpj-gratis)
 [![Total Downloads](http://img.shields.io/packagist/dt/jansenfelipe/cnpj-gratis.svg?style=flat)](https://packagist.org/packages/jansenfelipe/cnpj-gratis)
 [![License](http://img.shields.io/packagist/l/jansenfelipe/cnpj-gratis.svg?style=flat)](https://packagist.org/packages/jansenfelipe/cnpj-gratis)
@@ -12,7 +12,7 @@ Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para s
 
 Adicione no seu arquivo `composer.json` o seguinte registro na chave `require`
 
-    "jansenfelipe/cnpj-gratis": "1.0.*@dev"
+    "jansenfelipe/cnpj-gratis": "2.0.*"
 
 Execute
 
@@ -24,7 +24,7 @@ Adicione o autoload.php do composer no seu arquivo PHP.
 
 Primeiro chame o método `getParams()` para retornar os dados necessários para enviar no método `consulta()` 
 
-    $params = CnpjGratis::getParams(); //Output: array('captcha', 'captchaBase64', 'viewstate', 'cookie')
+    $params = CnpjGratis::getParams(); //Output: array('audio', 'captcha', 'captchaBase64', 'viewstate', 'cookie')
 
 Agora chame o método `consulta()`
 
