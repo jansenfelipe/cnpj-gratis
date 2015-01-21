@@ -40,8 +40,15 @@ class CnpjGratis {
         $audio = str_replace("javascript:setTimeout(function(){play_sound('", "", $audio);
         $audio = str_replace("')}, 8000); document.getElementById('spanSom').style.display='block'; document.getElementById('captchaAudio').focus();", "", $audio);
 
+        $resource = curl_init();
+        curl_setopt($resource, CURLOPT_URL, 'http://www.receita.fazenda.gov.br' . $audio);
+        curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($resource, CURLOPT_BINARYTRANSFER, 1);
+        $file = curl_exec($resource);
+        curl_close($resource);
+
         return array(
-            'audio' => 'http://www.receita.fazenda.gov.br' . $audio,
+            'audio' => $file,
             'captcha' => $urlCaptcha,
             'captchaBase64' => $captchaBase64,
             'viewstate' => $viewstate,
