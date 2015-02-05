@@ -38,7 +38,7 @@ Agora chame o método `consulta()`
 
 ### Frameworks
 
-##### (Laravel)
+##### (Laravel 4.2)
 
 Abra seu arquivo `config/app.php` e adicione `'JansenFelipe\CnpjGratis\CnpjGratisServiceProvider'` ao final do array `$providers`
 
