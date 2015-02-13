@@ -2,7 +2,6 @@
 
 namespace JansenFelipe\CnpjGratis;
 
-use Exception;
 use Goutte\Client;
 use JansenFelipe\Utils\Utils as Utils;
 use Symfony\Component\DomCrawler\Crawler;
@@ -15,44 +14,44 @@ class CnpjGratis {
      *
      * @param  string $cnpj CNPJ
      * @throws Exception
-     * @return array Link para ver o Captcha e Viewstate
+     * @return array Link para ver o Captcha e Cookie
      */
     public static function getParams() {
-        $client = new Client();
-        $crawler = $client->request('GET', 'http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/Cnpjreva_Solicitacao2.asp');
-
+        $client = new Client();        
+        $client->request('GET', 'http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/Cnpjreva_Solicitacao2.asp');
+       
         $response = $client->getResponse();
+
         $headers = $response->getHeaders();
-
         $cookie = $headers['Set-Cookie'][0];
+        
+        $ch = curl_init("http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/captcha/gerarCaptcha.asp");
+        $options = array(
+            CURLOPT_COOKIEJAR => 'cookiejar',
+            CURLOPT_HTTPHEADER => array(
+                "Pragma: no-cache",
+                "Origin: http://www.receita.fazenda.gov.br",
+                "Host: www.receita.fazenda.gov.br",
+                "User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:32.0) Gecko/20100101 Firefox/32.0",
+                "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language: pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3",
+                "Accept-Encoding: gzip, deflate",
+                "Referer: http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/cnpjreva_solicitacao2.asp",
+                "Cookie: flag=1; $cookie",
+                "Connection: keep-alive"
+            ),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_BINARYTRANSFER => TRUE
+        );
 
-        $viewstate = $crawler->filter("#viewstate")->attr('value');
-
-        if ($viewstate == "")
-            throw new Exception('Erro ao recuperar viewstate');
-
-        $imgcaptcha = $crawler->filter("#imgcaptcha")->attr('src');
-        $urlCaptcha = 'http://www.receita.fazenda.gov.br' . $imgcaptcha;
-
-        $captchaBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($urlCaptcha));
-
-        $audio = $crawler->filter("#captchaLink")->attr('onclick');
-        $audio = str_replace("javascript:setTimeout(function(){play_sound('", "", $audio);
-        $audio = str_replace("')}, 8000); document.getElementById('spanSom').style.display='block'; document.getElementById('captchaAudio').focus();", "", $audio);
-
-        $resource = curl_init();
-        curl_setopt($resource, CURLOPT_URL, 'http://www.receita.fazenda.gov.br' . $audio);
-        curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($resource, CURLOPT_BINARYTRANSFER, 1);
-        $file = curl_exec($resource);
-        curl_close($resource);
-
+        curl_setopt_array($ch, $options);
+        $img = curl_exec($ch);
+        curl_close($ch);
+                        
         return array(
-            'audio' => $file,
-            'captcha' => $urlCaptcha,
-            'captchaBase64' => $captchaBase64,
-            'viewstate' => $viewstate,
-            'cookie' => $cookie
+            'cookie' => $cookie,
+            'captchaBase64' => 'data:image/png;base64,' . base64_encode($img)
         );
     }
 
@@ -61,10 +60,11 @@ class CnpjGratis {
      *
      * @param  string $cnpj CNPJ
      * @param  string $captcha CAPTCHA
+     * @param  string $stringCookie COOKIE
      * @throws Exception
      * @return array  Dados da empresa
      */
-    public static function consulta($cnpj, $captcha, $viewstate, $stringCookie) {
+    public static function consulta($cnpj, $captcha, $stringCookie) {
 
         $result = array();
 
@@ -79,21 +79,20 @@ class CnpjGratis {
         $client->setHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9, */* ;q=0.8');
         $client->setHeader('Accept-Language', 'pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3');
         $client->setHeader('Accept-Encoding', 'gzip, deflate');
-        $client->setHeader('Referer', 'http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/Cnpjreva_Solicitacao2.asp');
+        $client->setHeader('Referer', 'http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/valida.asp');
         $client->setHeader('Cookie', $arrayCookie[0]);
         $client->setHeader('Connection', 'keep-alive');
 
         $param = array(
             'origem' => 'comprovante',
-            'viewstate' => $viewstate,
             'cnpj' => Utils::unmask($cnpj),
-            'captcha' => $captcha,
-            'captchaAudio' => '',
+            'txtTexto_captcha_serpro_gov_br' => $captcha,
             'submit1' => 'Consultar',
             'search_type' => 'cnpj'
         );
 
         $crawler = $client->request('POST', 'http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/valida.asp', $param);
+        
 
         if ($crawler->filter('body > table:nth-child(3) > tr:nth-child(2) > td > b > font')->count() > 0)
             throw new Exception('Erro ao consultar. O CNPJ informado não existe no cadastro.', 99);

@@ -24,14 +24,13 @@ Adicione o autoload.php do composer no seu arquivo PHP.
 
 Primeiro chame o método `getParams()` para retornar os dados necessários para enviar no método `consulta()` 
 
-    $params = CnpjGratis::getParams(); //Output: array('audio', 'captcha', 'captchaBase64', 'viewstate', 'cookie')
+    $params = CnpjGratis::getParams(); //Output: array('captchaBase64', 'cookie')
 
 Agora chame o método `consulta()`
 
     $dadosEmpresa = CnpjGratis::consulta(
         '45.543.915/0001-81',
         'INFORME_AS_LETRAS_DO_CAPTCHA',
-        $params['viewstate'],
         $params['cookie']
     );
 

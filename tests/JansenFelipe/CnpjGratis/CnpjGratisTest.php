@@ -11,11 +11,8 @@ class CnpjGratisTest extends PHPUnit_Framework_TestCase {
     public function testGetParams() {
 
         $this->params = CnpjGratis::getParams();
-        
-        $this->assertEquals(true, isset($this->params['audio']));
-        $this->assertEquals(true, isset($this->params['captcha']));
+                
         $this->assertEquals(true, isset($this->params['captchaBase64']));
-        $this->assertEquals(true, isset($this->params['viewstate']));
         $this->assertEquals(true, isset($this->params['cookie']));
     }
 
