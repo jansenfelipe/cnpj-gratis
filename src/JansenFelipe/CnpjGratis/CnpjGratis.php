@@ -2,6 +2,7 @@
 
 namespace JansenFelipe\CnpjGratis;
 
+use Exception;
 use Goutte\Client;
 use JansenFelipe\Utils\Utils as Utils;
 use Symfony\Component\DomCrawler\Crawler;
@@ -48,7 +49,10 @@ class CnpjGratis {
         curl_setopt_array($ch, $options);
         $img = curl_exec($ch);
         curl_close($ch);
-                        
+        
+        if(@imagecreatefromstring($img)==false)
+            throw new Exception('Não foi possível capturar o captcha');
+
         return array(
             'cookie' => $cookie,
             'captchaBase64' => 'data:image/png;base64,' . base64_encode($img)
