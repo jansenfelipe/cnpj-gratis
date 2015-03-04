@@ -12,7 +12,7 @@ Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para s
 
 Adicione no seu arquivo `composer.json` o seguinte registro na chave `require`
 
-    "jansenfelipe/cnpj-gratis": "2.0.*"
+    "jansenfelipe/cnpj-gratis": "2.0.*@dev"
 
 Execute
 
