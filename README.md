@@ -24,7 +24,7 @@ Adicione o autoload.php do composer no seu arquivo PHP.
 
 Primeiro chame o método `getParams()` para retornar os dados necessários para enviar no método `consulta()` 
 
-    $params = JansenFelipe\CnpjGratis\CnpjGratis::getParams(); //Output: array('captchaBase64', 'cookie')
+    $params = JansenFelipe\CnpjGratis\CnpjGratis::getParams();
 
 Agora basta chamar o método `consulta()`
 
