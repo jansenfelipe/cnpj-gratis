@@ -24,38 +24,12 @@ Adicione o autoload.php do composer no seu arquivo PHP.
 
 Primeiro chame o método `getParams()` para retornar os dados necessários para enviar no método `consulta()` 
 
-    $params = CnpjGratis::getParams(); //Output: array('captchaBase64', 'cookie')
+    $params = JansenFelipe\CnpjGratis\CnpjGratis::getParams(); //Output: array('captchaBase64', 'cookie')
 
-Agora chame o método `consulta()`
+Agora basta chamar o método `consulta()`
 
-    $dadosEmpresa = CnpjGratis::consulta(
+    $dadosEmpresa = JansenFelipe\CnpjGratis\CnpjGratis::consulta(
         '45.543.915/0001-81',
         'INFORME_AS_LETRAS_DO_CAPTCHA',
         $params['cookie']
     );
-
-
-### Frameworks
-
-##### (Laravel 4.2)
-
-Abra seu arquivo `config/app.php` e adicione `'JansenFelipe\CnpjGratis\CnpjGratisServiceProvider'` ao final do array `$providers`
-
-    'providers' => array(
-
-        'Illuminate\Foundation\Providers\ArtisanServiceProvider',
-        'Illuminate\Auth\AuthServiceProvider',
-        ...
-        'JansenFelipe\CnpjGratis\CnpjGratisServiceProvider',
-    ),
-
-Adicione também `'CnpjGratis' => 'JansenFelipe\CnpjGratis\Facade'` no final do array `$aliases`
-
-    'aliases' => array(
-
-        'App'        => 'Illuminate\Support\Facades\App',
-        'Artisan'    => 'Illuminate\Support\Facades\Artisan',
-        ...
-        'CnpjGratis'    => 'JansenFelipe\CnpjGratis\Facade',
-
-    ),
