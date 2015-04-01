@@ -10,15 +10,11 @@ Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para s
 
 ### Como usar
 
-Adicione no seu arquivo `composer.json` o seguinte registro na chave `require`
+Adicione a library
 
-    "jansenfelipe/cnpj-gratis": "2.0.*@dev"
+    $ composer require jansenfelipe/cnpj-gratis
 
-Execute
-
-    $ composer update
-
-Adicione o autoload.php do composer no seu arquivo PHP.
+Adicione o autoload.php do composer no seu script PHP.
 
     require_once 'vendor/autoload.php';  
 
