@@ -12,6 +12,7 @@
     "require": {
         "php": ">=5.4.0",
         "ext-gd":"*",
+        "ext-curl":"*",
         "jansenfelipe/utils": "1.0.*@dev",
         "fabpot/goutte": "2.0.*@dev"
     },
