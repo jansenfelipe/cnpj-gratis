@@ -13,15 +13,15 @@
         "php": ">=5.4.0",
         "ext-gd":"*",
         "ext-curl":"*",
-        "jansenfelipe/utils": "1.0.*@dev",
-        "fabpot/goutte": "2.0.*@dev"
+        "fabpot/goutte": "2.0.*@dev",
+        "jansenfelipe/utils": "^2.0@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0"
     },
     "autoload": {
-        "psr-0": {
-            "JansenFelipe\\CnpjGratis": "src/"
+        "psr-4": {
+            "JansenFelipe\\CnpjGratis\\": "src/"
         }
     },
     "extra": {
