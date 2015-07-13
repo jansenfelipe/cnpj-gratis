@@ -1,7 +1,7 @@
 {
     "name": "jansenfelipe/cnpj-gratis",
     "description": "Com esse pacote você poderá consultar, gratuitamente, CNPJs diretamente no site da receita.",
-    "keywords": ["laravel", "cnpj", "php"],
+    "keywords": ["consulta", "receita", "cnpj", "php"],
     "license": "MIT",
     "authors": [
         {
