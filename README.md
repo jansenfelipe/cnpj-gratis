@@ -39,6 +39,12 @@ $dadosEmpresa = JansenFelipe\CnpjGratis\CnpjGratis::consulta(
 );
 ```
 
+### Gostou? Conheça também
+
+* [CpfGratis](https://github.com/jansenfelipe/cpf-gratis)
+* [CepGratis](https://github.com/jansenfelipe/cep-gratis)
+* [Nfephp-serialize](https://github.com/jansenfelipe/nfephp-serialize)
+
 ### License
 
 The MIT License (MIT)
