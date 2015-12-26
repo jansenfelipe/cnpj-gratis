@@ -150,6 +150,8 @@ class CnpjGratis {
                         break;
                     case 'ENTE FEDERATIVO RESPONSÁVEL (EFR)': $key = 'ente_federativo_responsavel';
                         break;
+                    case 'DATA DE ABERTURA': $key = 'data_abertura';
+                        break;
                     default: $key = null;
                         break;
                 }
