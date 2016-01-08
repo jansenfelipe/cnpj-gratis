@@ -43,7 +43,8 @@ $dadosEmpresa = JansenFelipe\CnpjGratis\CnpjGratis::consulta(
 
 * [CpfGratis](https://github.com/jansenfelipe/cpf-gratis)
 * [CepGratis](https://github.com/jansenfelipe/cep-gratis)
-* [Nfephp-serialize](https://github.com/jansenfelipe/nfephp-serialize)
+* [CidadesGratis](https://github.com/jansenfelipe/cidades-gratis)
+* [NFePHPSerialize](https://github.com/jansenfelipe/nfephp-serialize)
 
 ### License
 
