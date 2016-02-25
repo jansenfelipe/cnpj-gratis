@@ -173,6 +173,14 @@ class CnpjGratis {
                 }
             }
         }
+        
+        $posBarra = strpos($result['telefone'], '/');
+        
+        if ($posBarra > 0) {
+            $result['telefone2'] = substr($result['telefone'], $posBarra + 1, strlen($result['telefone']) - $posBarra);
+            $result['telefone'] = substr($result['telefone'], 0, $posBarra - 1);
+        }
+        
 
         return $result;
     }
