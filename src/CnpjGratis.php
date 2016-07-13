@@ -98,10 +98,10 @@ class CnpjGratis {
         $crawler = $client->request('POST', 'http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/valida.asp', $param);
         
 
-        if ($crawler->filter('body > table:nth-child(3) > tr:nth-child(2) > td > b > font')->count() > 0)
+        if ($crawler->filter('body > div > table:nth-child(3) > tr:nth-child(2) > td > b > font')->count() > 0)
             throw new Exception('Erro ao consultar. O CNPJ informado não existe no cadastro.', 99);
 
-        $td = $crawler->filter('body > table:nth-child(3) > tr > td');
+        $td = $crawler->filter('body > div > table:nth-child(3) > tr > td');
 
         foreach ($td->filter('td') as $td) {
             $td = new Crawler($td);
