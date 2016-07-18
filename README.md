@@ -9,6 +9,11 @@ Com esse pacote você poderá realizar consultas de CNPJ no site da Receita Fede
 
 Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para ser digitado pelo usuário
 
+### Changelog
+
+* 2.0.8 - Bugfix: Campo telefone quando não informado. Obrigado @mprandot
+* 2.0.7 - Bugfix: Atualização site receita. Obrigado @Marciobds
+
 ### Como utilizar
 
 Adicione a library
