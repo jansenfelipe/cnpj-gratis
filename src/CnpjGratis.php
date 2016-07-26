@@ -96,7 +96,11 @@ class CnpjGratis {
         );
 
         $crawler = $client->request('POST', 'http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/valida.asp', $param);
-        
+
+        if (strpos($crawler->html(), '<b>Erro na Consulta</b>') !== false)
+        {
+            throw new Exception('Erro ao consultar. Confira se você digitou corretamente os caracteres fornecidos na imagem.', 98);
+        }
 
         if ($crawler->filter('body > div > table:nth-child(3) > tr:nth-child(2) > td > b > font')->count() > 0)
             throw new Exception('Erro ao consultar. O CNPJ informado não existe no cadastro.', 99);
