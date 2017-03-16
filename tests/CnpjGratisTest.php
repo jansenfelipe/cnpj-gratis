@@ -6,14 +6,14 @@ use PHPUnit_Framework_TestCase;
 
 class CnpjGratisTest extends PHPUnit_Framework_TestCase {
 
-    private $params;
+    public function testGetParams()
+    {
+        $cnpjGratis = new CnpjGratis();
 
-    public function testGetParams() {
-
-        $this->params = CnpjGratis::getParams();
+        $params = $cnpjGratis->params();
                 
-        $this->assertEquals(true, isset($this->params['captchaBase64']));
-        $this->assertEquals(true, isset($this->params['cookie']));
+        $this->assertEquals(true, isset($params->cookie));
+        $this->assertEquals(true, isset($params->captchaBase64));
     }
 
 }
