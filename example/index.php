@@ -13,7 +13,7 @@ if(isset($_POST['captcha']) && isset($_POST['cookie']) && isset($_POST['cnpj']))
     $params = CnpjGratis::getParams();
 ?>
 
-<img src="<?php echo $params['captchaBase64'] ?>" />
+<img src="data:image/png;base64,<?php echo $params['captchaBase64'] ?>" />
 
 <form method="POST">
     <input type="hidden" name="cookie" value="<?php echo $params['cookie'] ?>" />
