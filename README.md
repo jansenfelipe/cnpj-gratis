@@ -11,6 +11,7 @@ Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para s
 
 ### Changelog
 
+* 2.1.1 - Bugfix: Atualização site receita. Obrigado @fernandobatels
 * 2.1.0 - Removendo dependências extras e versão mínima PHP 5.5
 * 2.0.8 - Bugfix: Campo telefone quando não informado. Obrigado @mprandot
 * 2.0.7 - Bugfix: Atualização site receita. Obrigado @Marciobds
