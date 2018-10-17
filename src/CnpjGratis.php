@@ -86,16 +86,16 @@ class CnpjGratis {
             throw new Exception('Erro ao consultar. Confira se você digitou corretamente os caracteres fornecidos na imagem.', 98);
         }
 
-        if ($crawler->filter('body > div > table:nth-child(3) > tr:nth-child(2) > td > b > font')->count() > 0)
+        if ($crawler->filter('body > table:nth-child(3) font:nth-child(1)')->count() > 0)
             throw new Exception('Erro ao consultar. O CNPJ informado não existe no cadastro.', 99);
 
-        $td = $crawler->filter('body > div > table:nth-child(3) > tr > td');
+        $td = $crawler->filter('body > div > table:nth-child(1)');
 
         foreach ($td->filter('td') as $td) {
             $td = new Crawler($td);
 
             if ($td->filter('font:nth-child(1)')->count() > 0) {
-                $key = trim(preg_replace('/\s+/', ' ', $td->filter('font:nth-child(1)')->html()));
+                $key = trim(strip_tags(preg_replace('/\s+/', ' ', $td->filter('font:nth-child(1)')->html())));
 
                 switch ($key) {
                     case 'NOME EMPRESARIAL': $key = 'razao_social';
@@ -161,7 +161,7 @@ class CnpjGratis {
                 }
             }
         }
-        
+
         if(isset($result['telefone']) && $result['telefone'] != '') {
             $posBarra = strpos($result['telefone'], '/');
             if ($posBarra > 0) {
@@ -193,7 +193,8 @@ class CnpjGratis {
             CURLOPT_HEADER => 1,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_FOLLOWLOCATION => true
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_TIMEOUT_MS     => 30000
         ]);
 
         if (!empty($data)) {
